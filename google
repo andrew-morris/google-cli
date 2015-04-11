@@ -1,0 +1,30 @@
+#!/usr/bin/python
+
+# Quick script to make a Google and return whether it has any results or not.
+# Mostly used for checking hashes, indicators, domain names, weird strings, errors, etc.
+
+import json
+import urllib
+import sys
+from time import sleep
+
+__author__	= "Andrew Morris"
+__date__	= "January 1, 2014"
+__email__	= "andrew@morris.guru"
+
+x = sys.argv[1]
+
+query = urllib.urlencode({'q': x})
+url = 'http://ajax.googleapis.com/ajax/services/search/web?v=1.0&%s' % query
+search_response = urllib.urlopen(url)
+sleep(1)
+search_results = search_response.read()
+results = json.loads(search_results)
+data = results['responseData']
+try:
+	numResults = data['cursor']['estimatedResultCount']
+except KeyError:
+	print '[-] %s - Zero results. String not indexed by Google.' % x
+	sys.exit(0)
+
+print '[+] %s - Results found. String is indexed by Google.' % x
